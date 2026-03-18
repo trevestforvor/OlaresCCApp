@@ -15,6 +15,9 @@ app.use('/api/files', require('./files').router)
 app.use('/api/sessions', require('./sessions').router)
 app.use('/api/models', require('./models').router)
 
+// 404 for unmatched /api/* routes (prevents SPA fallback returning HTML to API clients)
+app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }))
+
 // Fallback to index.html for SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'))

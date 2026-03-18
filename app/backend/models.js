@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
         port: modelsUrl.port,
         path: modelsUrl.pathname,
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${apiKey}` },
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'x-api-key': apiKey },
         timeout: 5000,
       }
       const r = proto.request(reqOpts, resp => {

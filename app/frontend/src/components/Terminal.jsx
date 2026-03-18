@@ -10,6 +10,7 @@ export default function Terminal({ session, model, onSessionEnd }) {
   const xtermRef = useRef(null)
   const fitAddonRef = useRef(null)
   const wsRef = useRef(null)
+  const onDataDisposableRef = useRef(null)
 
   const connect = useCallback((sess) => {
     if (!sess) return
@@ -18,14 +19,16 @@ export default function Terminal({ session, model, onSessionEnd }) {
     const term = xtermRef.current
     term.clear()
 
+    // Use wss:// on HTTPS (required for Olares HTTPS entrance; ws:// is blocked as mixed content)
+    const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:'
     let url
     if (sess.id === 'new') {
       const cwd = encodeURIComponent(sess.cwd || '/workspace')
       const m = model ? `&model=${encodeURIComponent(model)}` : ''
-      url = `ws://${location.host}/ws/terminal/new?cwd=${cwd}${m}`
+      url = `${wsProto}//${location.host}/ws/terminal/new?cwd=${cwd}${m}`
     } else {
       const m = model ? `?model=${encodeURIComponent(model)}` : ''
-      url = `ws://${location.host}/ws/terminal/${sess.id}${m}`
+      url = `${wsProto}//${location.host}/ws/terminal/${sess.id}${m}`
     }
 
     const ws = new WebSocket(url)
@@ -48,7 +51,9 @@ export default function Terminal({ session, model, onSessionEnd }) {
 
     ws.onerror = () => term.write('\r\n\x1b[31mWebSocket error\x1b[0m\r\n')
 
-    term.onData(data => {
+    // Dispose previous onData subscription before adding a new one to prevent handler leak
+    onDataDisposableRef.current?.dispose()
+    onDataDisposableRef.current = term.onData(data => {
       if (ws.readyState === WebSocket.OPEN) ws.send(data)
     })
   }, [model, onSessionEnd])

@@ -1,0 +1,4 @@
+**/node_modules
+app/backend/public
+app/backend/dev-settings.json
+**/.git

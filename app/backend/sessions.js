@@ -1,5 +1,5 @@
 // app/backend/sessions.js
-const { execSync } = require('child_process')
+const { exec } = require('child_process')
 const router = require('express').Router()
 
 // In-memory registry of live PTY processes: sessionId -> pty instance
@@ -52,20 +52,18 @@ function parseSessions(raw) {
 }
 
 router.get('/', (req, res) => {
-  try {
-    const raw = execSync('claude --list --all 2>/dev/null', {
-      env: { ...process.env },
-      timeout: 10000,
-    }).toString()
-    const sessions = parseSessions(raw).map(s => ({
-      ...s,
-      live: livePtys.has(s.id),
-    }))
-    res.json(sessions)
-  } catch {
-    // claude not found or no sessions yet
-    res.json([])
-  }
+  exec('claude --list --all 2>/dev/null', { timeout: 10000 }, (err, stdout) => {
+    if (err && !stdout) return res.json([])
+    try {
+      const sessions = parseSessions(stdout).map(s => ({
+        ...s,
+        live: livePtys.has(s.id),
+      }))
+      res.json(sessions)
+    } catch {
+      res.json([])
+    }
+  })
 })
 
 router.post('/:id/stop', (req, res) => {

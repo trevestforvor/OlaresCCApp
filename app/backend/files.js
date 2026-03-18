@@ -7,7 +7,7 @@ const WORKSPACE_ROOT = process.env.WORKSPACE_ROOT || '/workspace'
 
 function safeResolvePath(requestedPath) {
   const resolved = path.resolve(requestedPath || WORKSPACE_ROOT)
-  if (!resolved.startsWith(WORKSPACE_ROOT)) return null
+  if (resolved !== WORKSPACE_ROOT && !resolved.startsWith(WORKSPACE_ROOT + '/')) return null
   return resolved
 }
 
