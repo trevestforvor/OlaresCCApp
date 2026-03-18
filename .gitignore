@@ -1,0 +1,6 @@
+node_modules/
+app/backend/public/
+dist/
+*.tgz
+.env
+dev-settings.json
