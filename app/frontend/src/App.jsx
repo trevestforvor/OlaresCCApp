@@ -13,7 +13,7 @@ export default function App() {
   const { sessions, refresh: refreshSessions } = useSessions()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [activeSession, setActiveSession] = useState(null)
-  const [selectedCwd, setSelectedCwd] = useState('/workspace')
+  const [selectedCwd, setSelectedCwd] = useState('')
   const [model, setModel] = useState('')
 
   const headerColor = settings?.theme?.headerColor || '#1a1a2e'

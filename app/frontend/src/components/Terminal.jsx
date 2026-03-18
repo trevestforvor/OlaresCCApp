@@ -23,9 +23,9 @@ export default function Terminal({ session, model, onSessionEnd }) {
     const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:'
     let url
     if (sess.id === 'new') {
-      const cwd = encodeURIComponent(sess.cwd || '/workspace')
-      const m = model ? `&model=${encodeURIComponent(model)}` : ''
-      url = `${wsProto}//${location.host}/ws/terminal/new?cwd=${cwd}${m}`
+      const cwdParam = sess.cwd ? `cwd=${encodeURIComponent(sess.cwd)}&` : ''
+      const m = model ? `model=${encodeURIComponent(model)}` : ''
+      url = `${wsProto}//${location.host}/ws/terminal/new?${cwdParam}${m}`
     } else {
       const m = model ? `?model=${encodeURIComponent(model)}` : ''
       url = `${wsProto}//${location.host}/ws/terminal/${sess.id}${m}`
