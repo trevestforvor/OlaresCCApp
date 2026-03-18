@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get install -y nodejs \
   && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -u 1000 -s /bin/bash claude
+RUN useradd -m -u 1001 -s /bin/bash claude
 
 USER claude
 ENV HOME=/home/claude
