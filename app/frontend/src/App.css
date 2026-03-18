@@ -1,0 +1,24 @@
+/* app/frontend/src/App.css */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0d0d14;
+  color: #e0e0e0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-area {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Allotment sash styling */
+.sash { background: #2a2a3e; }
