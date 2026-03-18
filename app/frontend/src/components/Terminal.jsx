@@ -84,7 +84,7 @@ export default function Terminal({ session, model, onSessionEnd }) {
     })
     obs.observe(containerRef.current)
 
-    return () => { obs.disconnect(); term.dispose(); wsRef.current?.close() }
+    return () => { obs.disconnect(); onDataDisposableRef.current?.dispose(); term.dispose(); wsRef.current?.close() }
   }, [])
 
   // Connect when session changes

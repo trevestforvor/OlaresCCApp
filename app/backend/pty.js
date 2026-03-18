@@ -41,7 +41,7 @@ function tryParseNewestId(raw) {
 
 function findNewestSessionId(attempts, resolve) {
   // Async retry — does NOT block the event loop
-  exec('claude --list 2>/dev/null', { timeout: 5000 }, (err, stdout) => {
+  exec('claude --list 2>/dev/null', { timeout: 5000, env: process.env }, (err, stdout) => {
     if (!err && stdout) {
       const id = tryParseNewestId(stdout)
       if (id) return resolve(id)
@@ -84,8 +84,8 @@ function handleTerminalWs(ws, req) {
     }
     // Check API key is configured (Anthropic key or 3rd-party auth token)
     const settings = loadSettings()
-    const hasKey = settings.ANTHROPIC_API_KEY || settings.ANTHROPIC_AUTH_TOKEN
-                || process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN
+    const hasKey = (settings.ANTHROPIC_API_KEY || settings.ANTHROPIC_AUTH_TOKEN
+                 || process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN)
     if (!hasKey) {
       if (ws.readyState === ws.OPEN) {
         ws.send('\r\n\x1b[31mNo API key configured. Please open Settings (\u2699) and enter your Anthropic API key.\x1b[0m\r\n')

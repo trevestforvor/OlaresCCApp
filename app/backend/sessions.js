@@ -53,7 +53,7 @@ function parseSessions(raw) {
 
 router.get('/', (req, res) => {
   exec('claude --list --all 2>/dev/null', { timeout: 10000 }, (err, stdout) => {
-    if (err && !stdout) return res.json([])
+    if (!stdout) return res.json([])
     try {
       const sessions = parseSessions(stdout).map(s => ({
         ...s,

@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
     const modelsUrl = new URL('/v1/models', savedBaseUrl)
     const proto = modelsUrl.protocol === 'https:' ? https : http
     const apiKey = settings.ANTHROPIC_API_KEY || settings.ANTHROPIC_AUTH_TOKEN || ''
+    if (!apiKey) return res.status(400).json({ error: 'No API key configured in settings' })
 
     const data = await new Promise((resolve, reject) => {
       const reqOpts = {
