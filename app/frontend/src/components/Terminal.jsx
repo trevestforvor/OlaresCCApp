@@ -5,7 +5,7 @@ import { FitAddon } from '@xterm/addon-fit'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import '@xterm/xterm/css/xterm.css'
 
-export default function Terminal({ session, model, onSessionEnd }) {
+export default function Terminal({ session, model, onSessionEnd, hidden }) {
   const containerRef = useRef(null)
   const xtermRef = useRef(null)
   const fitAddonRef = useRef(null)
@@ -92,10 +92,32 @@ export default function Terminal({ session, model, onSessionEnd }) {
     if (xtermRef.current) connect(session)
   }, [session, connect])
 
+  useEffect(() => {
+    if (!hidden && fitAddonRef.current && xtermRef.current) {
+      setTimeout(() => {
+        fitAddonRef.current.fit()
+        if (wsRef.current?.readyState === WebSocket.OPEN) {
+          const { cols, rows } = xtermRef.current
+          wsRef.current.send(JSON.stringify({ type: 'resize', cols, rows }))
+        }
+      }, 0)
+    }
+  }, [hidden])
+
   return (
     <div
       ref={containerRef}
-      style={{ height: '100%', background: '#0d0d14', padding: 4 }}
+      style={{
+        height: '100%',
+        background: '#080812',
+        padding: 4,
+        ...(hidden ? {
+          visibility: 'hidden',
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+        } : {}),
+      }}
     />
   )
 }
