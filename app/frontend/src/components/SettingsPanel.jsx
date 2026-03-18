@@ -2,19 +2,18 @@
 import { useState } from 'react'
 
 const FIELDS = [
-  { key: 'ANTHROPIC_API_KEY', label: 'Anthropic API Key', type: 'password' },
-  { key: 'ANTHROPIC_BASE_URL', label: '3rd Party Base URL', type: 'text', placeholder: 'http://ollama:11434' },
-  { key: 'ANTHROPIC_AUTH_TOKEN', label: 'Auth Token', type: 'password' },
-  { key: 'DEFAULT_MODEL', label: 'Default Model (single name for all tiers)', type: 'text' },
+  { key: 'ANTHROPIC_API_KEY',   label: 'Anthropic API Key',          type: 'password' },
+  { key: 'ANTHROPIC_BASE_URL',  label: '3rd Party Base URL',          type: 'text', placeholder: 'http://ollama:11434' },
+  { key: 'ANTHROPIC_AUTH_TOKEN',label: 'Auth Token',                  type: 'password' },
+  { key: 'DEFAULT_MODEL',       label: 'Default Model (all tiers)',   type: 'text' },
 ]
 
 export default function SettingsPanel({ settings, onSave, onClose }) {
   const [form, setForm] = useState({
-    ANTHROPIC_API_KEY: settings?.ANTHROPIC_API_KEY || '',
-    ANTHROPIC_BASE_URL: settings?.ANTHROPIC_BASE_URL || '',
+    ANTHROPIC_API_KEY:    settings?.ANTHROPIC_API_KEY    || '',
+    ANTHROPIC_BASE_URL:   settings?.ANTHROPIC_BASE_URL   || '',
     ANTHROPIC_AUTH_TOKEN: settings?.ANTHROPIC_AUTH_TOKEN || '',
-    DEFAULT_MODEL: settings?.DEFAULT_MODEL || '',
-    theme: settings?.theme || { headerColor: '#1a1a2e' },
+    DEFAULT_MODEL:        settings?.DEFAULT_MODEL        || '',
   })
   const [saving, setSaving] = useState(false)
 
@@ -25,19 +24,15 @@ export default function SettingsPanel({ settings, onSave, onClose }) {
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
-    }}>
-      <div style={{
-        background: '#1a1a2e', borderRadius: 8, padding: 24, minWidth: 400,
-        border: '1px solid rgba(255,255,255,0.1)',
-      }}>
-        <h2 style={{ color: '#fff', marginBottom: 20, fontSize: 16 }}>Settings</h2>
+    <div style={backdropStyle}>
+      <div style={panelStyle}>
+        <h2 style={{ color: 'var(--text-primary)', marginBottom: 20, fontSize: 15, fontWeight: 700 }}>Settings</h2>
 
         {FIELDS.map(f => (
           <div key={f.key} style={{ marginBottom: 14 }}>
-            <label style={{ color: '#aaa', fontSize: 12, display: 'block', marginBottom: 4 }}>{f.label}</label>
+            <label style={{ color: 'var(--text-muted)', fontSize: 11, display: 'block', marginBottom: 4, letterSpacing: '0.5px' }}>
+              {f.label}
+            </label>
             <input
               type={f.type}
               value={form[f.key] || ''}
@@ -48,25 +43,7 @@ export default function SettingsPanel({ settings, onSave, onClose }) {
           </div>
         ))}
 
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ color: '#aaa', fontSize: 12, display: 'block', marginBottom: 4 }}>Header Color</label>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <input
-              type="color"
-              value={form.theme?.headerColor || '#1a1a2e'}
-              onChange={e => setForm(p => ({ ...p, theme: { ...p.theme, headerColor: e.target.value } }))}
-              style={{ width: 40, height: 32, border: 'none', cursor: 'pointer', background: 'none' }}
-            />
-            <input
-              type="text"
-              value={form.theme?.headerColor || ''}
-              onChange={e => setForm(p => ({ ...p, theme: { ...p.theme, headerColor: e.target.value } }))}
-              style={{ ...inputStyle, width: 100 }}
-            />
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
           <button onClick={onClose} style={btnSecondary}>Cancel</button>
           <button onClick={handleSave} disabled={saving} style={btnPrimary}>
             {saving ? 'Saving…' : 'Save'}
@@ -77,16 +54,40 @@ export default function SettingsPanel({ settings, onSave, onClose }) {
   )
 }
 
+const backdropStyle = {
+  position: 'fixed', inset: 0,
+  background: 'rgba(0,0,0,0.65)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  zIndex: 100,
+}
+
+const panelStyle = {
+  background: 'var(--surface-dropdown)',
+  borderRadius: 10,
+  padding: 24,
+  minWidth: 400,
+  border: '1px solid rgba(138,100,255,0.2)',
+  boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
+}
+
 const inputStyle = {
-  width: '100%', background: 'rgba(255,255,255,0.05)', color: '#e0e0e0',
-  border: '1px solid rgba(255,255,255,0.12)', borderRadius: 4,
-  padding: '6px 10px', fontSize: 13,
+  width: '100%',
+  background: 'rgba(138,100,255,0.08)',
+  color: 'var(--text-primary)',
+  border: '1px solid rgba(138,100,255,0.2)',
+  borderRadius: 5,
+  padding: '6px 10px',
+  fontSize: 13,
 }
+
 const btnPrimary = {
-  background: '#3a5fc8', color: '#fff', border: 'none',
-  borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13,
+  background: '#6d3fc8', color: '#fff', border: 'none',
+  borderRadius: 5, padding: '8px 18px', cursor: 'pointer', fontSize: 13,
 }
+
 const btnSecondary = {
-  background: 'rgba(255,255,255,0.07)', color: '#aaa', border: '1px solid rgba(255,255,255,0.12)',
-  borderRadius: 4, padding: '8px 16px', cursor: 'pointer', fontSize: 13,
+  background: 'transparent',
+  color: 'var(--text-muted)',
+  border: '1px solid rgba(138,100,255,0.25)',
+  borderRadius: 5, padding: '8px 18px', cursor: 'pointer', fontSize: 13,
 }
