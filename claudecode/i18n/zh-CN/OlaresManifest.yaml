@@ -1,0 +1,9 @@
+metadata:
+  title: Claude Code
+  description: 在 Olares 设备上运行的基于浏览器的 Claude Code 终端，支持文件树和会话管理。
+spec:
+  fullDescription: |
+    在您的 Olares 设备上运行的基于浏览器的 Claude Code 开发环境。
+    支持文件树、会话管理、提供商配置和插件持久化。
+  upgradeDescription: |
+    初始版本。

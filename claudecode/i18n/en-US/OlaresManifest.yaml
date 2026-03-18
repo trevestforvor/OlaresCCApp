@@ -1,0 +1,9 @@
+metadata:
+  title: Claude Code
+  description: Browser-based Claude Code terminal with file tree and session management.
+spec:
+  fullDescription: |
+    Claude Code running in a browser-based developer environment on your Olares device.
+    Features file tree, session management, provider configuration, and persistent plugins.
+  upgradeDescription: |
+    Initial release.

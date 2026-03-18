@@ -1,0 +1,97 @@
+olaresManifest.version: '0.11.0'
+olaresManifest.type: app
+metadata:
+  name: claudecode
+  icon: https://app.cdn.olares.com/appstore/codeserver/icon.png
+  description: Browser-based Claude Code terminal with file tree, session management, and provider configuration.
+  appid: claudecode
+  title: Claude Code
+  version: '0.1.0'
+  categories:
+  - Developer Tools
+  - Productivity
+entrances:
+- name: claudecode
+  port: 3000
+  host: claudecode
+  title: Claude Code
+  icon: https://app.cdn.olares.com/appstore/codeserver/icon.png
+  openMethod: window
+  authLevel: internal
+spec:
+  versionName: '0.1.0'
+  fullDescription: |
+    Claude Code running in a browser-based developer environment on your Olares device.
+
+    Features:
+    - Split-pane layout: file tree on the left, xterm.js terminal on the right
+    - Session management: create, resume, and switch Claude Code sessions
+    - Provider configuration: Anthropic API or any OpenAI-compatible 3rd-party endpoint
+    - Model selection: choose Claude model at session spawn time
+    - Persistent sessions and plugins: Claude Code sessions and installed plugins survive container restarts
+    - Customizable header color
+
+    Designed for remote development of Olares marketplace apps from another machine.
+  upgradeDescription: |
+    Initial release.
+  developer: trevor
+  website: https://code.claude.com/
+  sourceCode: https://docs.anthropic.com/en/docs/claude-code
+  submitter: trevor
+  locale:
+  - en-US
+  - zh-CN
+  doc: https://docs.anthropic.com/en/docs/claude-code
+  license:
+  - text: Proprietary
+    url: https://www.anthropic.com/legal/commercial-terms
+  requiredMemory: 1Gi
+  limitedMemory: 4Gi
+  requiredDisk: 256Mi
+  limitedDisk: 8Gi
+  requiredCpu: 250m
+  limitedCpu: '2'
+  supportArch:
+  - amd64
+  - arm64
+permission:
+  appData: true
+  appCache: true
+  userData:
+  - Home
+options:
+  allowMultipleInstall: false
+  apiTimeout: 0
+  dependencies:
+  - name: olares
+    type: system
+    version: '>=1.12.3-0'
+envs:
+- envName: ANTHROPIC_BASE_URL
+  type: string
+  required: false
+  applyOnChange: true
+  editable: true
+  default: ''
+  description: 'Anthropic-compatible backend URL for 3rd-party providers. Example: http://ollama:11434'
+- envName: ANTHROPIC_API_KEY
+  type: string
+  required: false
+  applyOnChange: true
+  editable: true
+  default: ''
+  description: 'Anthropic API key. Required for Anthropic provider.'
+- envName: ANTHROPIC_AUTH_TOKEN
+  type: string
+  required: false
+  applyOnChange: true
+  editable: true
+  default: ''
+  description: 'Alternative auth token for 3rd-party integrations.'
+- envName: DEFAULT_MODEL
+  type: string
+  required: false
+  applyOnChange: true
+  editable: true
+  default: ''
+  description: 'Default model name mapped to all Claude tiers (Opus, Sonnet, Haiku). Used for 3rd-party backends.'
