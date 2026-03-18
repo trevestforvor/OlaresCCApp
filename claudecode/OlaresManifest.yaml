@@ -34,10 +34,10 @@ spec:
     Designed for remote development of Olares marketplace apps from another machine.
   upgradeDescription: |
     Initial release.
-  developer: trevor
+  developer: trevestforvor
   website: https://code.claude.com/
   sourceCode: https://docs.anthropic.com/en/docs/claude-code
-  submitter: trevor
+  submitter: trevestforvor
   locale:
   - en-US
   - zh-CN

@@ -1,5 +1,5 @@
 image:
-  repository: docker.io/YOUR_DOCKERHUB_HANDLE/claudecode-olares
+  repository: ghcr.io/trevestforvor/claudecode-olares
   tag: stable
   pullPolicy: IfNotPresent
 
