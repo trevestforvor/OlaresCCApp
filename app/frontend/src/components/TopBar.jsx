@@ -1,19 +1,22 @@
 // app/frontend/src/components/TopBar.jsx
 import { useState, useEffect } from 'react'
+import Dropdown from './Dropdown'
 
 const ANTHROPIC_MODELS = [
-  'claude-opus-4-6',
-  'claude-sonnet-4-6',
-  'claude-haiku-4-5-20251001',
+  { value: 'claude-opus-4-6',           label: 'claude-opus-4-6' },
+  { value: 'claude-sonnet-4-6',         label: 'claude-sonnet-4-6' },
+  { value: 'claude-haiku-4-5-20251001', label: 'claude-haiku-4-5' },
 ]
 
-export default function TopBar({
-  headerColor, sessions, model, onModelChange,
-  onSessionSelect, onNewSession, onSettingsOpen, settings
-}) {
+const PROVIDER_OPTIONS = [
+  { value: 'anthropic', label: 'Anthropic' },
+  { value: '3rdparty',  label: '3rd Party' },
+]
+
+export default function TopBar({ model, onModelChange, onSettingsOpen, settings }) {
   const [provider, setProvider] = useState('anthropic')
   const [thirdPartyModels, setThirdPartyModels] = useState([])
-  const [modelInput, setModelInput] = useState(model)
+  const [modelInput, setModelInput] = useState(model || '')
   const [modelsFailed, setModelsFailed] = useState(false)
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function TopBar({
       fetch(`/api/models?baseUrl=${encodeURIComponent(settings.ANTHROPIC_BASE_URL)}`)
         .then(r => r.json())
         .then(d => {
-          if (d.models?.length) { setThirdPartyModels(d.models); setModelsFailed(false) }
+          if (d.models?.length) { setThirdPartyModels(d.models.map(m => ({ value: m, label: m }))); setModelsFailed(false) }
           else setModelsFailed(true)
         })
         .catch(() => setModelsFailed(true))
@@ -35,96 +38,73 @@ export default function TopBar({
     onModelChange(val)
   }
 
-  const liveCount = sessions.filter(s => s.live).length
+  const providerPrefix = (
+    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
+  )
 
   return (
     <div style={{
-      height: 48,
-      background: headerColor,
+      height: 46,
+      background: 'var(--surface-topbar)',
       display: 'flex',
       alignItems: 'center',
-      padding: '0 16px',
-      gap: 12,
-      borderBottom: '1px solid rgba(255,255,255,0.08)',
+      padding: '0 14px',
+      gap: 8,
+      borderBottom: '1px solid rgba(138,100,255,0.15)',
       flexShrink: 0,
     }}>
-      <span style={{ fontWeight: 700, color: '#fff', marginRight: 8, letterSpacing: 1 }}>
+      <span style={{ fontWeight: 800, fontSize: 12, letterSpacing: '2.5px', color: 'var(--accent)', marginRight: 4, textTransform: 'uppercase' }}>
         Claude Code
       </span>
+      <div style={{ width: 1, height: 18, background: 'rgba(138,100,255,0.2)', margin: '0 2px' }} />
 
-      {/* Provider */}
-      <select
+      <Dropdown
         value={provider}
-        onChange={e => setProvider(e.target.value)}
-        style={selectStyle}
-      >
-        <option value="anthropic">Anthropic</option>
-        <option value="3rdparty">3rd Party</option>
-      </select>
+        options={PROVIDER_OPTIONS}
+        onChange={setProvider}
+        prefix={providerPrefix}
+      />
 
-      {/* Model */}
       {provider === '3rdparty' && modelsFailed ? (
         <input
           value={modelInput}
           onChange={e => handleModelChange(e.target.value)}
           placeholder="model name"
-          style={{ ...selectStyle, width: 160 }}
+          style={inputStyle}
         />
       ) : (
-        <select
+        <Dropdown
           value={model}
-          onChange={e => handleModelChange(e.target.value)}
-          style={selectStyle}
-        >
-          <option value="">— model —</option>
-          {modelList.map(m => <option key={m} value={m}>{m}</option>)}
-        </select>
+          options={modelList}
+          onChange={handleModelChange}
+          placeholder="— model —"
+        />
       )}
 
-      {/* Sessions */}
-      <select
-        onChange={e => {
-          if (e.target.value === '__new__') { onNewSession(); e.target.value = '' }
-          else {
-            const s = sessions.find(s => s.id === e.target.value)
-            if (s) onSessionSelect(s)
-          }
-        }}
-        style={selectStyle}
-        defaultValue=""
-      >
-        <option value="" disabled>Sessions {liveCount > 0 ? `(${liveCount} live)` : ''}</option>
-        <option value="__new__">+ New session</option>
-        {sessions.map(s => (
-          <option key={s.id} value={s.id}>
-            {s.live ? '● ' : '○ '}{s.title || s.id.slice(0, 8)} — {(s.projectPath || '').split('/').pop()}
-          </option>
-        ))}
-      </select>
+      <div style={{ flex: 1 }} />
 
-      <span style={{ flex: 1 }} />
-
-      {/* Settings */}
-      <button onClick={onSettingsOpen} style={btnStyle} title="Settings">⚙</button>
+      <button onClick={onSettingsOpen} style={settingsBtnStyle} title="Settings">⚙</button>
     </div>
   )
 }
 
-const selectStyle = {
-  background: 'rgba(255,255,255,0.08)',
-  color: '#fff',
-  border: '1px solid rgba(255,255,255,0.15)',
-  borderRadius: 4,
-  padding: '4px 8px',
-  fontSize: 13,
-  cursor: 'pointer',
+const inputStyle = {
+  background: 'rgba(138,100,255,0.08)',
+  border: '1px solid rgba(138,100,255,0.28)',
+  borderRadius: 6,
+  padding: '4px 10px',
+  fontSize: 12,
+  color: 'var(--text-secondary)',
+  width: 160,
 }
 
-const btnStyle = {
-  background: 'transparent',
-  color: '#fff',
-  border: 'none',
-  fontSize: 18,
+const settingsBtnStyle = {
+  width: 30, height: 30,
+  background: 'rgba(138,100,255,0.08)',
+  border: '1px solid rgba(138,100,255,0.2)',
+  borderRadius: 6,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  color: 'var(--accent-muted)',
+  fontSize: 15,
   cursor: 'pointer',
-  padding: '4px 8px',
 }
