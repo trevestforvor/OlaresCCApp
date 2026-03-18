@@ -1,12 +1,30 @@
 /* app/frontend/src/App.css */
+:root {
+  --bg:               #0a0a14;
+  --surface-topbar:   linear-gradient(90deg, #1a0a2e, #120a22);
+  --surface-filetree: #0d0d1c;
+  --surface-terminal: #080812;
+  --surface-tabbar:   #0d0a1c;
+  --surface-dropdown: #1a1030;
+  --accent:           #a78bfa;
+  --accent-muted:     #7c5cbf;
+  --accent-hover:     rgba(138,100,255,0.12);
+  --border:           rgba(138,100,255,0.25);
+  --text-primary:     #e2d9ff;
+  --text-secondary:   #c4b5fd;
+  --text-muted:       #6d5aa0;
+  --dot-live:         #7eca9c;
+  --dot-idle:         #6d5aa0;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, #root { height: 100%; width: 100%; overflow: hidden; }
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #0d0d14;
-  color: #e0e0e0;
+  background: var(--bg);
+  color: var(--text-primary);
 }
 
 .app {
@@ -20,5 +38,4 @@ body {
   overflow: hidden;
 }
 
-/* Allotment sash styling */
-.sash { background: #2a2a3e; }
+.sash { background: rgba(138,100,255,0.15); }
