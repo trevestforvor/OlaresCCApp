@@ -1,9 +1,10 @@
 metadata:
-  title: Claude Code
-  description: Browser-based Claude Code terminal with file tree and session management.
+  title: Claude Code (Headless)
+  description: Pure headless Claude Code terminal. Claude starts on launch and manages its own login and API keys.
 spec:
   fullDescription: |
-    Claude Code running in a browser-based developer environment on your Olares device.
-    Features file tree, session management, provider configuration, and persistent plugins.
+    A stripped-down Claude Code variant that launches Claude directly in a web terminal.
+    No file tree, no session manager, no settings panel — just Claude.
+    Claude handles authentication interactively on first launch.
   upgradeDescription: |
     Initial release.

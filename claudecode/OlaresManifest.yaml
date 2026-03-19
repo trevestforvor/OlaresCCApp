@@ -1,37 +1,44 @@
 olaresManifest.version: '0.11.0'
 olaresManifest.type: app
 metadata:
-  name: claudecode
+  name: claudecodeheadless
   icon: https://app.cdn.olares.com/appstore/codeserver/icon.png
-  description: Browser-based Claude Code terminal with file tree, session management, and provider configuration.
-  appid: claudecode
-  title: Claude Code
+  description: Pure headless Claude Code terminal. No web UI — Claude starts on launch and manages its own login and API keys.
+  appid: claudecodeheadless
+  title: Claude Code (Headless)
   version: '0.1.0'
   categories:
   - Developer Tools
   - Productivity
 entrances:
-- name: claudecode
+- name: claudecodeheadless
   port: 3000
-  host: claudecode
-  title: Claude Code
+  host: claudecodeheadless
+  title: Claude Code (Headless)
   icon: https://app.cdn.olares.com/appstore/codeserver/icon.png
   openMethod: window
   authLevel: internal
 spec:
   versionName: '0.1.0'
   fullDescription: |
-    Claude Code running in a browser-based developer environment on your Olares device.
+    A stripped-down Claude Code variant that launches Claude directly in a web terminal.
+
+    Everything except Claude Code itself has been removed. There is no file tree,
+    no session manager, no settings panel, and no pre-configured API keys.
+    Claude starts on launch and walks you through login and API key setup
+    interactively — exactly as it would in a local terminal.
+
+    Use this variant when you want the raw Claude Code experience on your Olares
+    device with zero configuration overhead.
 
     Features:
-    - Split-pane layout: file tree on the left, xterm.js terminal on the right
-    - Session management: create, resume, and switch Claude Code sessions
-    - Provider configuration: Anthropic API or any OpenAI-compatible 3rd-party endpoint
-    - Model selection: choose Claude model at session spawn time
-    - Persistent sessions and plugins: Claude Code sessions and installed plugins survive container restarts
-    - Customizable header color
+    - Instant Claude Code terminal on open — no extra clicks
+    - Claude-managed authentication (Anthropic account or API key, your choice)
+    - Minimal footprint: smaller image, lower idle memory
+    - Persistent home directory: auth and plugins survive restarts
 
-    Designed for remote development of Olares marketplace apps from another machine.
+    For the full GUI experience (file tree, session tabs, provider switcher) install
+    the standard "Claude Code" app instead.
   upgradeDescription: |
     Initial release.
   developer: trevestforvor
@@ -45,10 +52,10 @@ spec:
   license:
   - text: Proprietary
     url: https://www.anthropic.com/legal/commercial-terms
-  requiredMemory: 1Gi
+  requiredMemory: 256Mi
   limitedMemory: 4Gi
-  requiredDisk: 256Mi
-  limitedDisk: 8Gi
+  requiredDisk: 128Mi
+  limitedDisk: 4Gi
   requiredCpu: 250m
   limitedCpu: '2'
   supportArch:
@@ -66,32 +73,3 @@ options:
   - name: olares
     type: system
     version: '>=1.12.3-0'
-envs:
-- envName: ANTHROPIC_BASE_URL
-  type: string
-  required: false
-  applyOnChange: true
-  editable: true
-  default: ''
-  description: 'Anthropic-compatible backend URL for 3rd-party providers. Example: http://ollama:11434'
-- envName: ANTHROPIC_API_KEY
-  type: string
-  required: false
-  applyOnChange: true
-  editable: true
-  default: ''
-  description: 'Anthropic API key. Required for Anthropic provider.'
-- envName: ANTHROPIC_AUTH_TOKEN
-  type: string
-  required: false
-  applyOnChange: true
-  editable: true
-  default: ''
-  description: 'Alternative auth token for 3rd-party integrations.'
-- envName: DEFAULT_MODEL
-  type: string
-  required: false
-  applyOnChange: true
-  editable: true
-  default: ''
-  description: 'Default model name mapped to all Claude tiers (Opus, Sonnet, Haiku). Used for 3rd-party backends.'

@@ -1,6 +1,0 @@
-apiVersion: v2
-name: claudecodeheadless
-description: Claude Code Headless — pure terminal Claude Code, no web UI, Claude manages its own auth
-type: application
-version: '0.1.0'
-appVersion: 'stable'

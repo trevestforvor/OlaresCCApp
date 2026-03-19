@@ -1,6 +1,6 @@
 apiVersion: v2
-name: claudecode
-description: Claude Code Web UI — browser-based terminal and file tree for Claude Code on Olares
+name: claudecodeheadless
+description: Claude Code Headless — pure terminal Claude Code, no web UI, Claude manages its own auth
 type: application
 version: '0.1.0'
 appVersion: 'stable'

@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: claudecode
+  name: claudecodeheadless
   namespace: "{{ .Release.Namespace }}"
   labels:
-    io.kompose.service: claudecode
+    io.kompose.service: claudecodeheadless
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: claudecode
+      io.kompose.service: claudecodeheadless
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         io.kompose.network/chrome-default: "true"
-        io.kompose.service: claudecode
+        io.kompose.service: claudecodeheadless
     spec:
       initContainers:
         - name: init-home
@@ -26,19 +26,15 @@ spec:
             - sh
             - '-c'
             - |
-              mkdir -p /home/claude/.claude /config /workspace
-              chown -R 1000:1000 /home/claude /config /workspace
+              mkdir -p /home/claude/.claude
+              chown -R 1001:1001 /home/claude
           securityContext:
             runAsUser: 0
           volumeMounts:
             - name: app-home
               mountPath: /home/claude
-            - name: app-config
-              mountPath: /config
-            - name: user-workspace
-              mountPath: /workspace
       containers:
-        - name: claudecode
+        - name: claudecodeheadless
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -52,20 +48,6 @@ spec:
               value: /bin/bash
             - name: TERM
               value: xterm-256color
-            - name: SETTINGS_PATH
-              value: /config/settings.json
-            - name: WORKSPACE_ROOT
-              value: /workspace
-            - name: PORT
-              value: "3000"
-            - name: ANTHROPIC_BASE_URL
-              value: {{ .Values.olaresEnv.ANTHROPIC_BASE_URL | default "" | quote }}
-            - name: ANTHROPIC_API_KEY
-              value: {{ .Values.olaresEnv.ANTHROPIC_API_KEY | default "" | quote }}
-            - name: ANTHROPIC_AUTH_TOKEN
-              value: {{ .Values.olaresEnv.ANTHROPIC_AUTH_TOKEN | default "" | quote }}
-            - name: DEFAULT_MODEL
-              value: {{ .Values.olaresEnv.DEFAULT_MODEL | default "" | quote }}
           resources:
             requests:
               cpu: {{ .Values.resources.requests.cpu | quote }}
@@ -86,10 +68,6 @@ spec:
           volumeMounts:
             - name: app-home
               mountPath: /home/claude
-            - name: app-config
-              mountPath: /config
-            - name: user-workspace
-              mountPath: /workspace
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -103,41 +81,25 @@ spec:
               {{- if semverCompare ">=1.12.3-0" (toString .Values.sysVersion) }}
             path: '{{ .Values.userspace.appData }}'
               {{- else }}
-            path: '{{ .Values.userspace.appData }}/claudecode'
+            path: '{{ .Values.userspace.appData }}/claudecodeheadless'
               {{- end }}
             {{- else }}
-            path: '{{ .Values.userspace.appData }}/claudecode'
+            path: '{{ .Values.userspace.appData }}/claudecodeheadless'
             {{- end }}
-            type: DirectoryOrCreate
-        - name: app-config
-          hostPath:
-            {{- if .Values.sysVersion }}
-              {{- if semverCompare ">=1.12.3-0" (toString .Values.sysVersion) }}
-            path: '{{ .Values.userspace.appData }}/config'
-              {{- else }}
-            path: '{{ .Values.userspace.appData }}/claudecode/config'
-              {{- end }}
-            {{- else }}
-            path: '{{ .Values.userspace.appData }}/claudecode/config'
-            {{- end }}
-            type: DirectoryOrCreate
-        - name: user-workspace
-          hostPath:
-            path: '{{ .Values.userspace.userData }}'
             type: DirectoryOrCreate
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: claudecode
+  name: claudecodeheadless
   namespace: "{{ .Release.Namespace }}"
   labels:
-    io.kompose.service: claudecode
+    io.kompose.service: claudecodeheadless
 spec:
   type: ClusterIP
   selector:
-    io.kompose.service: claudecode
+    io.kompose.service: claudecodeheadless
   ports:
     - name: "3000"
       protocol: TCP

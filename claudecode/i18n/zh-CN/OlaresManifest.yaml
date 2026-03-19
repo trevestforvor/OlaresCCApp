@@ -1,9 +1,10 @@
 metadata:
-  title: Claude Code
-  description: 在 Olares 设备上运行的基于浏览器的 Claude Code 终端，支持文件树和会话管理。
+  title: Claude Code（无界面版）
+  description: 纯终端 Claude Code，启动即进入 Claude，由 Claude 自行管理登录和 API 密钥。
 spec:
   fullDescription: |
-    在您的 Olares 设备上运行的基于浏览器的 Claude Code 开发环境。
-    支持文件树、会话管理、提供商配置和插件持久化。
+    精简版 Claude Code，直接在 Web 终端中启动 Claude。
+    无文件树、无会话管理器、无设置面板——只有 Claude 本身。
+    首次启动时，Claude 会引导您完成身份验证和 API 密钥配置。
   upgradeDescription: |
     初始版本。
