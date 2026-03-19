@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5/css/xterm.css"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    #terminal { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5/lib/xterm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10/lib/addon-fit.js"></script>
+  <script>
+    const term = new Terminal({
+      cursorBlink: true,
+      scrollback: 10000,
+      allowProposedApi: true,
+      theme: { background: '#000000' },
+    });
+    const fitAddon = new FitAddon.FitAddon();
+    term.loadAddon(fitAddon);
+    term.open(document.getElementById('terminal'));
+    fitAddon.fit();
+
+    let ws = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 5;
+    const RETRY_DELAY = 3000;
+
+    function connect() {
+      ws = new WebSocket(`ws://${location.host}`);
+
+      ws.onopen = () => {
+        retryCount = 0;
+        // Send terminal dimensions before anything else so the PTY spawns at the right size
+        ws.send(JSON.stringify({ type: 'init', cols: term.cols, rows: term.rows }));
+      };
+
+      ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        if (msg.type === 'output') {
+          term.write(msg.data);
+        }
+        // 'exit' is informational — onclose handles the actual reconnect
+      };
+
+      ws.onclose = () => {
+        if (retryCount >= MAX_RETRIES) {
+          term.write('\r\n\x1b[31m[Could not reconnect. Refresh the page to try again.]\x1b[0m');
+          return;
+        }
+        retryCount++;
+        term.write(
+          `\r\n\x1b[33m[Session ended \u2014 reconnecting in 3s\u2026 (${retryCount}/${MAX_RETRIES})]\x1b[0m`
+        );
+        setTimeout(connect, RETRY_DELAY);
+      };
+    }
+
+    // Keyboard input → PTY
+    term.onData((data) => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'input', data }));
+      }
+    });
+
+    // Terminal resize (from fitAddon) → PTY resize (TIOCSWINSZ)
+    term.onResize(({ cols, rows }) => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'resize', cols, rows }));
+      }
+      fitAddon.fit();
+    });
+
+    // Browser window resize → re-fit terminal → triggers term.onResize above
+    window.addEventListener('resize', () => fitAddon.fit());
+
+    connect();
+  </script>
+</body>
+</html>
