@@ -42,11 +42,13 @@
       };
 
       ws.onmessage = (e) => {
-        const msg = JSON.parse(e.data);
-        if (msg.type === 'output') {
-          term.write(msg.data);
-        }
-        // 'exit' is informational — onclose handles the actual reconnect
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'output') {
+            term.write(msg.data);
+          }
+          // 'exit' is informational — onclose handles the actual reconnect
+        } catch {}
       };
 
       ws.onclose = () => {
@@ -74,7 +76,6 @@
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'resize', cols, rows }));
       }
-      fitAddon.fit();
     });
 
     // Browser window resize → re-fit terminal → triggers term.onResize above
