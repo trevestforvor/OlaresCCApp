@@ -7,7 +7,12 @@ const { WebSocketServer } = require('ws');
 const pty = require('node-pty');
 
 const PORT = process.env.PORT || 3000;
+const PING_INTERVAL = 25000; // 25s keepalive — stays under typical 60s proxy idle timeouts
 const HTML = fs.readFileSync(path.join(__dirname, 'index.html'));
+
+// Prevent server crash on unhandled errors
+process.on('uncaughtException', (err) => console.error('uncaughtException:', err));
+process.on('unhandledRejection', (err) => console.error('unhandledRejection:', err));
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -18,6 +23,12 @@ const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
   let ptyProcess = null;
+
+  // Keepalive: ping every 25s to prevent reverse proxy idle timeout kills
+  const pingTimer = setInterval(() => {
+    if (ws.readyState === ws.OPEN) ws.ping();
+  }, PING_INTERVAL);
+  ws.on('close', () => clearInterval(pingTimer));
 
   // Wait for the browser's first message: { type: 'init', cols, rows }
   // This guarantees PTY spawns at the correct terminal size, not a hardcoded default.
