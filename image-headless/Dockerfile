@@ -25,10 +25,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get install -y nodejs \
   && rm -rf /var/lib/apt/lists/*
 
-# Install Claude Code globally — binary at /usr/local/bin/claude, on PATH for all users
-RUN npm install -g @anthropic-ai/claude-code
-
 RUN useradd -m -u 1001 -s /bin/bash claude
+
+# Install Claude Code via official installer (as claude user, installs to ~/.claude/bin/)
+USER claude
+RUN curl -fsSL https://claude.ai/install.sh | bash
+USER root
+
+# Put claude on PATH for all users
+ENV PATH="/home/claude/.claude/bin:${PATH}"
 
 # Copy compiled node_modules and server source from their locations under project root
 WORKDIR /app
