@@ -1,48 +1,46 @@
 olaresManifest.version: '0.11.0'
 olaresManifest.type: app
 metadata:
-  name: claudecodeheadless
+  name: claudecode
   icon: https://app.cdn.olares.com/appstore/codeserver/icon.png
-  description: Pure headless Claude Code terminal. No web UI — Claude starts on launch and manages its own login and API keys.
-  appid: claudecodeheadless
-  title: Claude Code (Headless)
-  version: '0.1.0'
+  description: Claude Code terminal for Olares. Claude starts on launch and manages its own auth.
+  appid: claudecode
+  title: Claude Code
+  version: '0.2.0'
   categories:
   - Developer Tools
   - Productivity
 entrances:
-- name: claudecodeheadless
+- name: claudecode
   port: 3000
-  host: claudecodeheadless
-  title: Claude Code (Headless)
+  host: claudecode
+  title: Claude Code
   icon: https://app.cdn.olares.com/appstore/codeserver/icon.png
   openMethod: window
   authLevel: internal
 spec:
-  versionName: '0.1.0'
+  versionName: '0.2.0'
   fullDescription: |
-    A stripped-down Claude Code variant that launches Claude directly in a web terminal.
+    Claude Code running directly in a web terminal on your Olares device.
 
-    Everything except Claude Code itself has been removed. There is no file tree,
-    no session manager, no settings panel, and no pre-configured API keys.
-    Claude starts on launch and walks you through login and API key setup
-    interactively — exactly as it would in a local terminal.
+    Claude starts on launch and handles its own authentication interactively —
+    exactly as it would in a local terminal. No file tree, no settings panel,
+    no pre-configured credentials required.
 
-    Use this variant when you want the raw Claude Code experience on your Olares
-    device with zero configuration overhead.
+    Optional: set ANTHROPIC_API_KEY in Studio's Environment Variables configuration
+    to skip the interactive login flow entirely. Without it, Claude will prompt you
+    to authenticate on first launch; credentials are saved and not required again.
 
     Features:
     - Instant Claude Code terminal on open — no extra clicks
     - Claude-managed authentication (Anthropic account or API key, your choice)
-    - Minimal footprint: smaller image, lower idle memory
-    - Persistent home directory: auth and plugins survive restarts
-
-    For the full GUI experience (file tree, session tabs, provider switcher) install
-    the standard "Claude Code" app instead.
+    - Optional ANTHROPIC_API_KEY for zero-prompt startup
+    - Persistent home directory: auth and session history survive restarts
   upgradeDescription: |
-    Initial release.
+    Rebuilt terminal layer: replaced ttyd with node-pty + xterm.js for correct
+    TUI rendering and working interactive auth flow.
   developer: trevestforvor
-  website: https://code.claude.com/
+  website: https://claude.ai/code
   sourceCode: https://docs.anthropic.com/en/docs/claude-code
   submitter: trevestforvor
   locale:
