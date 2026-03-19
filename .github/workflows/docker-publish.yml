@@ -1,93 +1,41 @@
-name: Build and Push Docker Images
+name: Build and Push Docker Image
 
 on:
   push:
-    branches:
-      - main
-    tags:
-      - 'v*'
-
-env:
-  REGISTRY: ghcr.io
+    branches: [main]
+    tags: ['v*']
 
 jobs:
   build-and-push:
-    name: Full UI image
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Get short SHA
-        id: sha
+      - id: sha
         run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: image/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/trevestforvor/claudecode-olares:stable
-            ghcr.io/trevestforvor/claudecode-olares:${{ steps.sha.outputs.short }}
-          cache-from: type=gha,scope=full
-          cache-to: type=gha,mode=max,scope=full
-
-      - name: Print image tag
-        run: echo "Full UI image tag => ${{ steps.sha.outputs.short }}"
-
-  build-and-push-headless:
-    name: Headless image
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Get short SHA
-        id: sha
-        run: echo "short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-
-      - name: Build and push headless
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: .
           file: image-headless/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/trevestforvor/claudecode-headless-olares:stable
-            ghcr.io/trevestforvor/claudecode-headless-olares:${{ steps.sha.outputs.short }}
-          cache-from: type=gha,scope=headless
-          cache-to: type=gha,mode=max,scope=headless
+            ghcr.io/trevestforvor/claudecode-olares:stable
+            ghcr.io/trevestforvor/claudecode-olares:${{ steps.sha.outputs.short }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Print image tag
-        run: echo "Headless image tag => ${{ steps.sha.outputs.short }}"
+      - run: echo "Image tag => ${{ steps.sha.outputs.short }}"
