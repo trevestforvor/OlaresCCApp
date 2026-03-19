@@ -23,14 +23,10 @@ RUN TTYD_ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64") 
 
 RUN useradd -m -u 1001 -s /bin/bash claude
 
-USER claude
-ENV HOME=/home/claude
-ENV PATH=/home/claude/.local/bin:${PATH}
-RUN curl -fsSL https://claude.ai/install.sh | bash -s stable
+# Install Claude Code globally so it's on PATH for all users
+RUN npm install -g @anthropic-ai/claude-code
 
-USER root
 ENV HOME=/home/claude
-ENV PATH=/home/claude/.local/bin:${PATH}
 
 EXPOSE 3000
 USER claude
