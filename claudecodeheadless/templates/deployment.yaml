@@ -27,7 +27,7 @@ spec:
             - '-c'
             - |
               mkdir -p /home/claude/.claude
-              chown -R 1000:1000 /home/claude
+              chown -R 1001:1001 /home/claude
           securityContext:
             runAsUser: 0
           volumeMounts:
