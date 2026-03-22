@@ -6,7 +6,7 @@ metadata:
   description: Claude Code terminal for Olares. Claude starts on launch and manages its own auth.
   appid: claudecode
   title: Claude Code
-  version: '0.2.0'
+  version: '1.1.0'
   categories:
   - Developer Tools
   - Productivity
@@ -19,7 +19,7 @@ entrances:
   openMethod: window
   authLevel: internal
 spec:
-  versionName: '0.2.0'
+  versionName: '1.1.0'
   fullDescription: |
     Claude Code running directly in a web terminal on your Olares device.
 
@@ -37,8 +37,7 @@ spec:
     - Optional ANTHROPIC_API_KEY for zero-prompt startup
     - Persistent home directory: auth and session history survive restarts
   upgradeDescription: |
-    Rebuilt terminal layer: replaced ttyd with node-pty + xterm.js for correct
-    TUI rendering and working interactive auth flow.
+    Version bump to 1.1.0. No functional changes from 0.2.0.
   developer: trevestforvor
   website: https://claude.ai/code
   sourceCode: https://docs.anthropic.com/en/docs/claude-code
